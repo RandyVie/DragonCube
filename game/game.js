@@ -709,6 +709,7 @@
   $('#rules-close').addEventListener('click', () => $('#rules').classList.add('hidden'));
   $('#rules').addEventListener('click', e => { if (e.target.id === 'rules') $('#rules').classList.add('hidden'); });
   window.addEventListener('keydown', e => {
+    if (e.target.tagName === 'INPUT' || document.documentElement.classList.contains('locked')) return;
     if (e.code === 'Escape') { $('#auto-menu').classList.add('hidden'); if (state.auto) stopAuto('Autoplay stopped'); }
     if (e.code === 'Space' || e.code === 'Enter') { e.preventDefault(); $('#play-btn').click(); }
     if (state.phase === 'place' && /^Digit[1-4]$/.test(e.code)) onFieldClick(+e.code.slice(5) - 1);
@@ -725,7 +726,7 @@
     if (state.mode !== 'base') startGame();
   }
   $('#test-summon').addEventListener('click', testSummon);
-  window.addEventListener('keydown', e => { if (e.code === 'KeyD' && !e.repeat) testSummon(); });
+  window.addEventListener('keydown', e => { if (e.code === 'KeyD' && !e.repeat && e.target.tagName !== 'INPUT' && !document.documentElement.classList.contains('locked')) testSummon(); });
 
   // testing helper: open with #summon to start with 6 of 7 dice collected
   if (location.hash === '#summon') saveCollected(new Set([1, 2, 3, 4, 5, 6]));

@@ -19,6 +19,16 @@
     <feGaussianBlur id="vblur-g" stdDeviation="0 0"/>
   </filter>
 </svg>
+<div id="gate">
+  <form id="gate-form" autocomplete="off">
+    <img src="assets/logo.png" alt="Dragon Cube">
+    <label for="gate-pw">Enter the password to play</label>
+    <input id="gate-pw" type="password" autocomplete="current-password" required>
+    <button type="submit">Unlock</button>
+    <div id="gate-err" role="alert"></div>
+  </form>
+</div>
+<script src="gate.js"></script>
 <div id="viewport">
   <div id="stage">
     <img class="bg" src="assets/background.jpg" alt="">
