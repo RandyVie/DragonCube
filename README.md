@@ -4,7 +4,11 @@ A Belgian-style skill dice game for the web browser.
 
 ## Play
 
-Open `game/index.html` through a local web server, for example:
+Play online: https://randyvie.github.io/DragonCube/
+
+Or run it locally:
+
+
 
 ```bash
 python3 -m http.server 8765 --directory game
