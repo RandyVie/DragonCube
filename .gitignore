@@ -1,0 +1,4 @@
+.DS_Store
+# original art sources (PSDs, renders) are too large for GitHub
+Resources/
+.claude/

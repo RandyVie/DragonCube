@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dragon Cube</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="electric" x="-20%" y="-20%" width="140%" height="140%">
+    <feTurbulence id="electric-noise" type="fractalNoise" baseFrequency="0.08" numOctaves="2" seed="1" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="7" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <filter id="vblur" x="0" y="-50%" width="100%" height="200%">
+    <feGaussianBlur id="vblur-g" stdDeviation="0 0"/>
+  </filter>
+</svg>
+<div id="viewport">
+  <div id="stage">
+    <img class="bg" src="assets/background.jpg" alt="">
+
+    <!-- pay table -->
+    <div id="paytable">
+      <img class="pt-title" src="assets/paytable.png" alt="Pay table">
+      <div id="collect" title="Collect all 7 dice in winning lines to summon the dragon">
+        <div id="collect-dice"></div>
+        <div class="collect-label">summon</div>
+      </div>
+      <div id="pt-rows"></div>
+    </div>
+
+    <!-- hold column -->
+    <div id="hold">
+      <div class="hold-frame"></div>
+      <div class="hold-well"></div>
+      <div id="hold-dice"></div>
+      <div id="hold-count">12 left</div>
+    </div>
+
+    <img id="logo" src="assets/logo.png" alt="Dragon Cube">
+    <div id="mode-badge" class="hidden"></div>
+
+    <!-- points + prize ladder -->
+    <div id="points-panel" class="panel">
+      <div class="pp-head">
+        <span class="label">points</span>
+        <span id="points">0</span>
+        <span id="mult"></span>
+      </div>
+      <div id="ladder"></div>
+    </div>
+
+    <img id="hero" src="assets/hero.png" alt="">
+    <div id="sparks" class="fx"><video src="assets/sparks.mp4" muted loop playsinline preload="auto"></video></div>
+
+    <!-- 4 playing fields -->
+    <div id="fields"></div>
+
+    <!-- bottom bar -->
+    <div class="meter" style="left:110px"><div class="label">balance</div><div class="panel value" id="balance">0.00€</div></div>
+    <div class="meter" style="left:380px"><div class="label">last win</div><div class="panel value" id="lastwin">0.00€</div></div>
+    <div class="meter" style="left:650px"><div class="label">stake</div><div class="panel value" id="stake">0.25€</div></div>
+
+    <div id="message">Press play to roll the dragon dice!</div>
+
+    <button id="stake-btn" class="img-btn" title="Change stake"><img src="assets/money.png" alt="Stake"></button>
+    <button id="auto-btn" class="img-btn" title="Autoplay"><img src="assets/play-base.png" alt="Autoplay"><img class="arrow" src="assets/play-arrow.png" alt=""><span id="auto-count" class="hidden"></span></button>
+    <div id="auto-menu" class="panel hidden">
+      <div class="auto-title">Autoplay</div>
+      <div class="auto-sub">How many games?</div>
+      <div class="auto-opts">
+        <button data-n="10">10</button><button data-n="25">25</button><button data-n="50">50</button>
+        <button data-n="100">100</button><button data-n="inf" class="inf">∞</button>
+      </div>
+      <div class="auto-note">The dragon places the dice on its suggested field. Autoplay stops when the dragon is summoned or your balance runs out.</div>
+    </div>
+    <button id="play-btn" title="Play one game (space)">Play</button>
+    <button id="sound-btn" class="round-btn" title="Sound">♪</button>
+    <button id="info-btn" class="round-btn" title="How to play">i</button>
+    <!-- TEMPORARY: remove before release -->
+    <button id="test-summon" title="Temporary test button (key D)">TEST · Summon dragon (D)</button>
+
+    <!-- dragon summon + wish -->
+    <div id="summon" class="hidden">
+      <div class="speed s1"></div>
+      <div class="speed s2"></div>
+      <div class="speed s3"></div>
+      <div id="ritual"></div>
+      <div id="flash"></div>
+      <img id="summon-dragon" src="assets/dragon.png" alt="">
+      <div id="wish-title"></div>
+      <div id="wishes"></div>
+    </div>
+
+    <!-- bonus: take it or not -->
+    <div id="bonus" class="overlay hidden">
+      <img id="bonus-dragon" src="assets/dragon.png" alt="">
+      <div class="bonus-box">
+        <div class="bonus-title">Take it or not?</div>
+        <div id="bonus-rounds"></div>
+        <div class="bonus-sub">The dragon offers you</div>
+        <div id="bonus-offer">0.00€</div>
+        <div id="bonus-history"></div>
+        <div class="bonus-buttons">
+          <button id="take-btn" class="big-btn take">Take it</button>
+          <button id="not-btn" class="big-btn not">Not!</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- result banner -->
+    <div id="result" class="hidden">
+      <div class="result-title"></div>
+      <div class="result-sub"></div>
+    </div>
+
+    <!-- rules -->
+    <div id="rules" class="overlay hidden">
+      <div class="rules-box panel">
+        <button class="close round-btn" id="rules-close">×</button>
+        <h2>How to play</h2>
+        <ol>
+          <li>Pick your stake with the coin button and press <b>play</b>. The stake is paid once per game.</li>
+          <li>The dragon rolls a column of <b>3 dice</b>. <b>You choose</b> which of the 4 fields it goes into. The column fills the next free column of that field, left to right. You get <b>12 columns</b>.</li>
+          <li><b>3 equal dice</b> on a row or a diagonal of a field is a winning line (5 lines per field).</li>
+          <li>Wins in 3 fields: points <b>×1.5</b>. Wins in all 4 fields: points <b>×2</b>. A field of 9 equal dice: <b>+200</b>.</li>
+          <li>Reach <b>100 points</b> or more to win a prize from the ladder.</li>
+          <li><b>Summon the dragon:</b> every die (1 to 7 stars) that forms a winning line is collected in the meter. Collect <b>all 7</b> and the dragon is summoned after the game. Your collection is kept between games, separately for each stake.</li>
+          <li>The dragon grants <b>one wish</b>: <b>10 Free Games</b>, <b>Dragon's Treasure</b> (take it or not: up to 5 offers, the 5th must be taken) or <b>Dragon Wilds</b> (5 free games where dragon dice count as any face). Nothing is collected during free games.</li>
+        </ol>
+        <p class="tip">Tip: the glowing field is the dragon's suggestion. Pressing play (or space) while choosing places the dice there. The round arrow button starts autoplay.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="rules.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
